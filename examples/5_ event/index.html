@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>设计模式实践</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <style>
+            .title {
+                font-weight: bold;
+                font-size: 18px;
+                padding: 15px;
+            }
+            .container{
+                display: flex;
+                width: 100%;
+                max-width: 400px;
+                justify-content: space-around;
+            }
+            .container > div {
+                border-right: 1px solid #000000;
+                padding: 10px;
+                font-size: 12px;
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div class="title">发布订阅模式</div>
+            <div class="btn-group">
+                <button id="triggre">发布事件</button>
+                <button id="triggre-offline">发布离线事件</button>
+            </div>
+            <div class="container">
+                <div>
+                    <h5>订阅者</h5>
+                    <ul id="listener"></ul>
+                </div>
+                <div>
+                    <h5>单次订阅者</h5>
+                    <ul id="listener-once"></ul>
+                </div>
+                <div id="listener-offline">
+                    <h5>离线订阅者</h5>
+                    <button id="listen">开始订阅</button>
+                    <ul id="listener-offline"></ul>
+                </div>
+            </div>
+        </section>
+       
+        <script>
+            var Event = function () {
+            var clientList = {}
+            var cache = {}
+
+            this.listen = function (key, cb) {
+                if(cache[key] && cache[key].length) {
+                    var _this = this
+                    cache[key].forEach(function (args) {
+                        cb.apply(_this, args)
+                    })
+                    cache[key] = []
+                }
+                clientList[key] = clientList[key] || []
+                clientList[key].push(cb)
+            }
+
+            this.one = function (key, cb) {
+                var fn = function () {
+                    cb.apply(this, arguments)
+                    this.remove(key, fn)
+                }
+                clientList[key] = clientList[key] || []
+                clientList[key].push(fn)
+            }
+
+            this.remove = function (key, cb) {
+                var fns = clientList[key]
+                if(!cb) {
+                    clientList[key] = []
+                }else if(fns && fns.length) {
+                    clientList[key] = fns.filter(fn => fn !== cb)
+                }
+            }
+
+            this.trigger = function () {
+                var key = Array.prototype.shift.call(arguments)
+                var args = arguments
+                var fns = clientList[key]
+                var _this = this
+
+                if(fns && fns.length) {
+                    fns.forEach(function(fn) {
+                        fn.apply(_this, args)
+                    })
+                } else { // 保存没有订阅者的事件，派发给以后的订阅者
+                    var list = cache[key] || []
+                    list.push(args)
+                    cache[key] = list
+                    console.log('key', key, cache[key]);
+
+                }
+            }
+        }
+
+        // 使用事件模式
+        var event = new Event()
+        var appendLi = function (parent, text) {
+            var li = document.createElement('li')
+            li.innerText = text
+            parent.appendChild(li)
+        }
+
+        event.listen('event', function () {
+            appendLi(document.getElementById('listener'), '接收到事件')
+        })
+
+        event.one('event', function () {
+            appendLi(document.getElementById('listener-once'), '接收到事件')
+        })
+
+        document.getElementById('triggre').onclick = function () {
+            event.trigger('event', '派发事件')
+        }
+
+        document.getElementById('triggre-offline').onclick = function () {
+            event.trigger('event-offline', '派发离线事件')
+        }
+
+        document.getElementById('listener-offline').onclick = function () {
+            event.listen('event-offline', function () {
+                appendLi(document.getElementById('listener-offline'), '接收到事件')
+            })
+        }
+
+        </script>
+    </body>
+</html>

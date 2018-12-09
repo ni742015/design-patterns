@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>设计模式实践</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <style>
+            .title {
+                font-weight: bold;
+                font-size: 18px;
+                padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div class="title">迭代器模式</div>
+            <div class="container">
+               <div class="btn-group">
+                   <button id="next">next</button>
+                   <button id="reset">reset</button>
+               </div>
+               <ul id="list">
+               </ul>
+            </div>
+        </section>
+       
+        <script>
+            // 内迭代
+            var myEach = function (list, cb) {
+                for (let index = 0; index < list.length; index++) {
+                    const element = list[index];
+                    if(cb(element, index) === false) {
+                        break
+                    }
+                    
+                }
+            };
+
+            // 外迭代
+            var Iterator = function (obj) {
+                var current = 0
+                return {
+                    next: function () {
+                        return ++current
+                    },
+                    getCurrentItem: function () {
+                        return obj[current]
+                    },
+                    isDone: function () {
+                        return current >= obj.length
+                    },
+                    length: obj.length,
+                    reset: function() {
+                        current = 0
+                    }
+                }
+            }
+
+            var list = ['吃饭','睡觉','改bug']
+            var iterator = new Iterator(list)
+            var listElem = document.getElementById('list')
+            document.getElementById('next').onclick = function () {
+                if(iterator.isDone()) {
+                    document.getElementById('next').setAttribute('disabled', true)
+                } else {
+                    var li = document.createElement('li')
+                    li.innerText = iterator.getCurrentItem()
+                    listElem.appendChild(li)
+                    iterator.next()
+                }
+            }
+
+            document.getElementById('reset').onclick = function () {
+                var list = Array.prototype.slice.call(listElem.children, 0) // 将listElem.children转换为数组，否则他的length值会因为子元素的删除而减少
+                myEach(list, function (child) {
+                    listElem.removeChild(child)
+                })
+                iterator.reset()
+                document.getElementById('next').removeAttribute('disabled')
+            }
+        </script>
+    </body>
+</html>

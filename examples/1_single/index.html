@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>设计模式实践</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+        <style>
+            .title {
+                font-weight: bold;
+                font-size: 18px;
+                padding: 15px;
+            }
+            .btn-group {
+                padding: 15px;
+            }
+            .modal {
+                width: 100px;
+                height: 50px;
+                border: 1px solid #000000;
+                padding: 15px;
+            }
+            input{
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div class="title">单例模式</div>
+            
+            <div class="btn-group">
+                <button>弹窗1</button>
+                <button>弹窗2</button>
+            </div>
+        </section>
+       
+        <script>
+            var ModalSingle = function () {
+                var div
+                return function (title) {
+                    if(div) {
+                        div.style.display = 'none'
+                        div.children[0].innerText = title
+                    } else {
+                        div = document.createElement('div')
+                        div.className = 'modal'
+                        div.innerHTML = '<div>'+title+'</div><input placeholder="写点内容试试"/>'
+                        div.style.display = 'none'
+                        document.body.appendChild(div)
+                    }
+                    return div
+                }
+            }
+
+            var modal = ModalSingle()
+            document.getElementsByTagName('button')[0].onclick = function () {
+                var modalEle = modal('弹窗1')
+                modalEle.style.display = 'block'
+            }
+            document.getElementsByTagName('button')[1].onclick = function () {
+                var modalEle = modal('弹窗2')
+                modalEle.style.display = 'block'
+            }
+        </script>
+    </body>
+</html>

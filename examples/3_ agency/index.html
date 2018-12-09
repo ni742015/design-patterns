@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>设计模式实践</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        <style>
+            .title {
+                font-weight: bold;
+                font-size: 18px;
+                padding: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div class="title">代理模式</div>
+            <div class="image-container">
+            </div>
+        </section>
+       
+        <script>
+            var MyImage = function () {
+                this.img = document.createElement('img')
+                document.body.appendChild(this.img)
+            }
+            MyImage.prototype.setSrc = function (src) {
+                this.img.src = src
+            }
+
+            var ProxyImage = function () {
+                this.img = new MyImage()
+            }
+            ProxyImage.prototype.setSrc = function (src) {
+                var img = this.img
+                var _img = new Image()
+                _img.onload = function () {
+                    console.log('onload', src)
+                    
+                    img.setSrc(src) // 当新图片加载成功后替换loading图
+                }
+                _img.src = src
+                img.setSrc('./loading.gif') // 将图片设置为loading图
+            }
+
+            var img = new ProxyImage()
+            img.setSrc('https://goss3.veer.com/creative/vcg/veer/612/veer-158729052.jpg')
+        </script>
+    </body>
+</html>

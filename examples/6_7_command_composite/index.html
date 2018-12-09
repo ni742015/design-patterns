@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>设计模式实践</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+        
+        <style>
+            .title {
+                font-weight: bold;
+                font-size: 18px;
+                padding: 15px;
+            }
+            .ball-container {
+                position: relative;
+                height: 50px;
+            }
+            .ball {
+                transition: .5s;
+                position: absolute;
+                border-radius: 50%;
+                background-color: red;
+                width: 20px;
+                height: 20px;
+                left: 0;
+                top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <section>
+            <div class="title">命令模式、组合模式</div>
+            <div class="ball-container">
+                <div id="ball" class="ball"></div>
+            </div>
+            <div class="btn-group">
+                <button id="btn-left">左移</button>
+                <button id="btn-right">右移</button>
+                <button id="btn-undo">撤销</button>
+                <button id="btn-redo">重复</button>
+                <button id="btn-marco">组合命令</button>
+            </div>
+        </section>
+       
+        <script src="./index.js"></script>
+    </body>
+</html>
